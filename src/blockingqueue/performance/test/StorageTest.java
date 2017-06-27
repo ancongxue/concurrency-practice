@@ -20,9 +20,31 @@ public class StorageTest {
     // 队列最大容量
     private static final Integer         MAX_SIZE       = 20;
 
-    private static final ExecutorService executeService = Executors.newFixedThreadPool(THREAD_NUM * 2);
-
     public static void main(String[] args) {
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        LinkedBlockingDeque<Storage.Goods> goodsList5 = new LinkedBlockingDeque();
+        List<Future> futureList5 = blockingQueuePerformanceTest(goodsList5);
+        System.out.println("无边界的LinkedBlockingDeque压力测试结果：");
+        calculateTime(futureList5);
+        System.out.println("====================================");
+
+        LinkedBlockingDeque<Storage.Goods> goodsList4 = new LinkedBlockingDeque(MAX_SIZE);
+        List<Future> futureList4 = blockingQueuePerformanceTest(goodsList4);
+        System.out.println("边界为" + MAX_SIZE + "的LinkedBlockingDeque压力测试结果：");
+        calculateTime(futureList4);
+        System.out.println("====================================");
+
+        ArrayBlockingQueue<Storage.Goods> goodsList2 = new ArrayBlockingQueue(MAX_SIZE);
+        List<Future> futureList2 = blockingQueuePerformanceTest(goodsList2);
+        System.out.println("边界为" + MAX_SIZE + "的ArrayBlockingQueue压力测试结果：");
+        calculateTime(futureList2);
+        System.out.println("====================================");
 
         LinkedBlockingQueue<Storage.Goods> goodsList = new LinkedBlockingQueue();
         List<Future> futureList = blockingQueuePerformanceTest(goodsList);
@@ -36,23 +58,6 @@ public class StorageTest {
         calculateTime(futureList1);
         System.out.println("====================================");
 
-        ArrayBlockingQueue<Storage.Goods> goodsList2 = new ArrayBlockingQueue(MAX_SIZE);
-        List<Future> futureList2 = blockingQueuePerformanceTest(goodsList2);
-        System.out.println("边界为" + MAX_SIZE + "的ArrayBlockingQueue压力测试结果：");
-        calculateTime(futureList2);
-        System.out.println("====================================");
-
-        LinkedBlockingDeque<Storage.Goods> goodsList4 = new LinkedBlockingDeque(MAX_SIZE);
-        List<Future> futureList4 = blockingQueuePerformanceTest(goodsList4);
-        System.out.println("边界为" + MAX_SIZE + "的LinkedBlockingDeque压力测试结果：");
-        calculateTime(futureList4);
-        System.out.println("====================================");
-
-        LinkedBlockingDeque<Storage.Goods> goodsList5 = new LinkedBlockingDeque();
-        List<Future> futureList5 = blockingQueuePerformanceTest(goodsList5);
-        System.out.println("无边界的LinkedBlockingDeque压力测试结果：");
-        calculateTime(futureList5);
-        System.out.println("====================================");
 
     }
 
@@ -63,6 +68,8 @@ public class StorageTest {
      * @return
      */
     public static List<Future> blockingQueuePerformanceTest(BlockingQueue blockingQueue) {
+
+        ExecutorService executeService = Executors.newFixedThreadPool(THREAD_NUM * 2);
 
         Storage storage = new Storage(blockingQueue);
 
@@ -77,6 +84,8 @@ public class StorageTest {
             Future future = executeService.submit(new Consumer(storage));
             futureList.add(future);
         }
+
+        executeService.shutdown();
 
         return futureList;
     }
