@@ -29,7 +29,7 @@ public class Producer implements Callable {
 
         Long costTime = endTime - startTime;
 
-        System.out.println(Thread.currentThread().getName() + "costTime:" + costTime);
+        System.out.println(Thread.currentThread().getName() + "：costTime:" + costTime);
 
         return costTime;
     }

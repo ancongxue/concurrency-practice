@@ -26,18 +26,17 @@ public class Consumer implements Callable {
         Long endTime = null;
 
         for (int i = 0; i < NUM; i++) {
-
             if (i == 0) {
                 startTime = System.currentTimeMillis();
             }
-
             storage.consume();
-
             if (i == NUM - 1) {
                 endTime = System.currentTimeMillis();
             }
-
         }
+
+//        System.out.println(Thread.currentThread().getName() + " startTime: " + startTime);
+//        System.out.println(Thread.currentThread().getName() + " endTime: " + endTime);
 
         Map<String, Long> statTimeAndEndTime = new HashMap<>(1);
         statTimeAndEndTime.put("startTime", startTime);

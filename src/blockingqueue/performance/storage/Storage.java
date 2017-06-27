@@ -2,6 +2,7 @@ package blockingqueue.performance.storage;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
@@ -9,17 +10,11 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class Storage {
 
-    // 最大容量
-    private static final Integer       MAX_SIZE  = 20;
+    private BlockingQueue<Goods> goodsList;
 
-    // ArrayBlockingQueue 指定容量为20
-//     ArrayBlockingQueue<Goods> goodsList = new ArrayBlockingQueue(MAX_SIZE);
-
-    // LinkedBlockingDeque 指定容量为20
-//     private LinkedBlockingDeque<Goods> goodsList = new LinkedBlockingDeque(MAX_SIZE);
-
-    // LinkedBlockingDeque 未指定容量
-    private LinkedBlockingDeque<Goods> goodsList = new LinkedBlockingDeque();
+    public Storage(BlockingQueue blockingQueue) {
+        this.goodsList = blockingQueue;
+    }
 
     /**
      * 生产货物

@@ -27,7 +27,7 @@ public class Consumer implements Callable {
         Long endTime = System.currentTimeMillis();
 
         Long costTime = endTime - startTime;
-        System.out.println(Thread.currentThread().getName() + "costTime:" + costTime);
+        System.out.println(Thread.currentThread().getName() + "：costTime:" + costTime);
 
         return costTime;
     }

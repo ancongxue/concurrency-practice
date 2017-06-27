@@ -39,6 +39,9 @@ public class Producer implements Callable {
 
         }
 
+//        System.out.println(Thread.currentThread().getName() + " startTime: " + startTime);
+//        System.out.println(Thread.currentThread().getName() + " endTime: " + endTime);
+
         Map<String, Long> statTimeAndEndTime = new HashMap<>(2);
         statTimeAndEndTime.put("startTime", startTime);
         statTimeAndEndTime.put("endTime", endTime);
