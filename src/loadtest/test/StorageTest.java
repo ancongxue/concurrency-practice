@@ -6,31 +6,30 @@ import loadtest.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * Created by haozhugogo on 2017/6/24.
  */
 public class StorageTest {
 
-    private static final Integer         THREAD_NUM     = 100;
+    private static final Integer         THREAD_NUM         = 100;
 
-    private static final ExecutorService executeService = Executors.newFixedThreadPool(THREAD_NUM * 2);
+    private static final Integer         COUNT_DOWN_LATCH_NUM = THREAD_NUM * 2;
+
+    private static final ExecutorService executeService     = Executors.newFixedThreadPool(THREAD_NUM * 2);
+
+    private static CountDownLatch        countDownLatch;
 
     public static void main(String[] args) {
 
         try {
-            List<Future> futureList = loadTest();
+            countDownLatch = new CountDownLatch(COUNT_DOWN_LATCH_NUM);
 
-            // 等待执行完毕
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            List<Future> futureList = loadTest(countDownLatch);
+
+            // 等待线程执行完成
+            countDownLatch.await();
 
             // 获取平均值
             Long sum = 0L;
@@ -65,24 +64,22 @@ public class StorageTest {
 
     }
 
-    public static List<Future> loadTest() {
+    public static List<Future> loadTest(CountDownLatch countDownLatch) {
 
         Storage storage = new Storage();
         List<Future> futureList = new ArrayList<>(THREAD_NUM * 2);
 
         for (int i = 0; i < THREAD_NUM; i++) {
 
-            Future future = executeService.submit(new Producer(storage));
+            Future future = executeService.submit(new Producer(storage, countDownLatch));
             futureList.add(future);
 
         }
         for (int i = 0; i < THREAD_NUM; i++) {
 
-            Future future = executeService.submit(new Consumer(storage));
+            Future future = executeService.submit(new Consumer(storage, countDownLatch));
             futureList.add(future);
         }
-
-        executeService.shutdown();
 
         return futureList;
 
